@@ -1695,7 +1695,7 @@ export async function kexploit() {
     }
     
     if (localStorage.ExploitLoaded === "yes" && sessionStorage.ExploitLoaded != "yes") {
-        msgs.innerHTML = "بالفعل .تحياتي، مركز بشير GoldHEN تم تحميل";
+        msgs.innerHTML = "تم تحميل GoldHEN بالفعل .تحياتي، مركز بشير";
         return new Promise(() => {});
     }
  
@@ -1831,7 +1831,7 @@ function runPayload(PLfile) {
 kexploit().then(() => {
 	setTimeout(() => {
 		runPayload("./goldhen_2.4b18.10.bin");
-		msgs.innerHTML = "تحياتي، مركز بشير GoldHEN تم تحميل";
+		msgs.innerHTML = "تم تحميل GoldHEN بنجاح .تحياتي، مركز بشير";
 	},500);
 }).catch(() => {
     msgs.innerHTML = "فشل التحميل للأسف! أعد تشغيل جهازك";
