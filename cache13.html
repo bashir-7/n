@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ar" dir="rtl" manifest="13xx/13xx.manifest">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#020713">
+<title>Bashir • تثبيت 13.xx</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Bashir • PS4 Jailbreak</h1>
+<hr>
+<h1 id="msgs">بدء تجهيز ذاكرة التخزين المؤقت لإصدارات 13.02 — 13.52…</h1>
+<script>
+(function(){
+  var app=window.applicationCache, msg=document.getElementById('msgs');
+  function set(t){ if(msg) msg.innerHTML=t; }
+  function pct(e){
+    var p=(e && e.lengthComputable && e.total) ? Math.round(e.loaded/e.total*100) : null;
+    set('تثبيت ملفات 13.xx دون اتصال بالإنترنت: <span class="cache-percent" dir="ltr">'+(p===null?'…':p+'%')+'</span>');
+  }
+  function ready(){
+    set('تم تجهيز ملفات 13.xx بنجاح ✔<br><small>يمكن الآن فصل الإنترنت وتشغيل الصفحة من الذاكرة المحلية.</small>');
+    setTimeout(function(){ location.replace('index.html'); }, 1800);
+  }
+  if(!app){ set('المتصفح لا يدعم نظام التخزين المؤقت المطلوب.'); return; }
+  app.addEventListener('checking',function(){set('جارٍ فحص نسخة التخزين المؤقت…');},false);
+  app.addEventListener('downloading',function(){set('جارٍ تنزيل ملفات 13.xx…');},false);
+  app.addEventListener('progress',pct,false);
+  app.addEventListener('cached',ready,false);
+  app.addEventListener('updateready',function(){
+    try{app.swapCache();}catch(e){}
+    ready();
+  },false);
+  app.addEventListener('noupdate',function(){
+    set('ملفات 13.xx موجودة مسبقًا ✔<br><small>جارٍ فتح الواجهة…</small>');
+    setTimeout(function(){location.replace('index.html');},900);
+  },false);
+  app.addEventListener('error',function(){
+    set('تعذر تحديث التخزين المؤقت.<br><small>أعد فتح الصفحة مع اتصال الشبكة ثم حاول مرة أخرى.</small>');
+  },false);
+})();
+</script>
+</body>
+</html>
