@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ar" dir="rtl" manifest="cache.appcache">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تثبيت ذاكرة التخزين المؤقت</title>
+<style>
+html,body{width:100%;height:100%;margin:0}
+body{
+  background:#020713 url("../background.jpg") center/cover no-repeat fixed;
+  color:#fff;font:22px/1.7 Arial,Tahoma,sans-serif;
+  text-align:center;direction:rtl;overflow:hidden;
+  text-shadow:0 1px 3px rgba(0,0,0,.85)
+}
+.info{position:absolute;top:45%;left:50%;width:92%;transform:translate(-50%,-50%)}
+#msgs{min-height:2em}
+.cache-percent{display:inline-block;direction:ltr;unicode-bidi:isolate;white-space:nowrap;margin-right:6px}
+.sub{font-size:16px;opacity:.78;margin-top:10px}
+.bad{color:#ff6b78}.ok{color:#4df0a0}
+</style>
+</head>
+<body>
+<div class="info">
+  <div id="msgs">جارٍ بدء تثبيت ذاكرة التخزين المؤقت...</div>
+  <div id="sub" class="sub">لا تغلق الصفحة حتى يكتمل التثبيت</div>
+</div>
+<script>
+(function(){
+  var msgs=document.getElementById("msgs");
+  var sub=document.getElementById("sub");
+  var ac=window.applicationCache;
+  var last=-1, done=false;
+
+  function setMsg(text, cls){
+    msgs.className=cls||"";
+    msgs.innerHTML=text;
+  }
+  function openIndex(){
+    if(done) return;
+    done=true;
+    setMsg("تم تثبيت ذاكرة التخزين المؤقت بنجاح", "ok");
+    sub.textContent="جارٍ فتح الصفحة...";
+    setTimeout(function(){ location.replace("index.html"); }, 500);
+  }
+
+  /* لا تعرض صفحة الكاش رسالة "المتصفح لا يدعم...".
+     في حال عدم توفر ApplicationCache نمرر المستخدم للصفحة الرئيسية
+     بدل إيقاف الواجهة برسالة خطأ غير مفيدة على PS4. */
+  if(!ac){
+    setMsg("جارٍ فتح الصفحة...");
+    sub.textContent="";
+    setTimeout(function(){ location.replace("index.html"); }, 300);
+    return;
+  }
+
+  ac.addEventListener("downloading",function(){
+    setMsg("جارٍ تثبيت ذاكرة التخزين المؤقت...");
+  },false);
+
+  ac.addEventListener("progress",function(e){
+    if(!e || !e.total) return;
+    var p=Math.round((e.loaded/e.total)*100);
+    p=Math.max(0,Math.min(100,p));
+    if(p!==last){
+      last=p;
+      setMsg("جارٍ تثبيت ذاكرة التخزين المؤقت... <span class='cache-percent'>"+p+"%</span>");
+    }
+  },false);
+
+  ac.addEventListener("cached",openIndex,false);
+  ac.addEventListener("noupdate",openIndex,false);
+  ac.addEventListener("updateready",function(){
+    try{ac.swapCache();}catch(e){}
+    openIndex();
+  },false);
+
+  ac.addEventListener("error",function(){
+    setMsg("تعذر تثبيت ذاكرة التخزين المؤقت","bad");
+    sub.textContent="تحقق من وجود جميع الملفات ومساراتها ثم أعد فتح الصفحة.";
+  },false);
+
+  ac.addEventListener("obsolete",function(){
+    setMsg("ذاكرة التخزين المؤقت أصبحت غير صالحة","bad");
+    sub.textContent="أعد فتح الصفحة لبدء تثبيت جديد.";
+  },false);
+
+  if(ac.status===ac.IDLE || ac.status===ac.UPDATEREADY) openIndex();
+})();
+</script>
+</body>
+</html>
